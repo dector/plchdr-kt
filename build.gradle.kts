@@ -5,13 +5,16 @@ plugins {
 }
 
 dependencies {
+    implementation("org.jetbrains.skiko:skiko-jvm-runtime-${detectOs()}-x64:0.1.21")
 }
 
 group = "space.dector.${rootProject.name}"
 version = "0.1-SNAPSHOT"
 
+
 repositories {
     jcenter()
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
 tasks.withType<KotlinCompile> {
