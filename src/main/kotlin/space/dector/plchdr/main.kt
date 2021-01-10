@@ -9,40 +9,39 @@ import org.http4k.routing.path
 import org.http4k.routing.routes
 import org.http4k.server.Netty
 import org.http4k.server.asServer
+import org.jetbrains.skija.EncodedImageFormat
+import org.jetbrains.skija.Surface
 
 
 fun main() {
     val app = routes(
-        "/{width}/{height}" bind GET to { req: Request ->
+        "/{width}/{height}/{color:[a-f0-9]*}" bind GET to { req: Request ->
             val w = req.path("width")?.toIntOrNull() ?: 100
             val h = req.path("height")?.toIntOrNull() ?: w
+            val color = (req.path("color")?.toLongOrNull(radix = 16) ?: 0xa78bfaL)
+                .toInt()
 
-            Response(OK).body("$w-$h")
+            val pngData = createPngImage(w, h, color)
+
+            Response(OK)
+                .header("Content-Type", "image/png")
+                .body(pngData.inputStream())
         }
     )
 
     val server = app.asServer(Netty())
     server.start().block()
+}
 
-/*
-    val window = SkiaWindow().apply {
-        layer.renderer = object : SkiaRenderer {
-            override fun onRender(canvas: Canvas, width: Int, height: Int) {
-                canvas.clear(0xffa78bfa.toInt())
-            }
+private fun createPngImage(w: Int, h: Int, color: Int): ByteArray {
+    val surface = Surface.makeRasterN32Premul(w, h)!!
+    val canvas = surface.canvas
 
-            override fun onInit() {
-            }
+    val bgColor = (0xff000000 or color.toLong()).toInt()
+    canvas.clear(bgColor)
 
-            override fun onReshape(width: Int, height: Int) {
-            }
+    val image = surface.makeImageSnapshot()
+    val pngData = image.encodeToData(EncodedImageFormat.PNG)!!
 
-            override fun onDispose() {
-            }
-        }
-        setSize(500, 500)
-    }
-
-    window.isVisible = true
-*/
+    return pngData.bytes
 }
