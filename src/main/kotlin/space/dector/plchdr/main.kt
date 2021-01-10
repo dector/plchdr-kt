@@ -1,11 +1,21 @@
 package space.dector.plchdr
 
-import org.jetbrains.skija.Canvas
-import org.jetbrains.skiko.SkiaRenderer
-import org.jetbrains.skiko.SkiaWindow
+import org.http4k.core.Request
+import org.http4k.core.Response
+import org.http4k.core.Status
+import org.http4k.server.Netty
+import org.http4k.server.asServer
 
 
 fun main() {
+    val app = { req: Request ->
+        Response(Status.OK).body(req.toString())
+    }
+
+    val server = app.asServer(Netty())
+    server.start().block()
+
+/*
     val window = SkiaWindow().apply {
         layer.renderer = object : SkiaRenderer {
             override fun onRender(canvas: Canvas, width: Int, height: Int) {
@@ -25,5 +35,5 @@ fun main() {
     }
 
     window.isVisible = true
-    println("It works!")
+*/
 }

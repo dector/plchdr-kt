@@ -5,6 +5,9 @@ plugins {
 }
 
 dependencies {
+    implementation(Http4K.core)
+    implementation(Http4K.netty)
+
     implementation("org.jetbrains.skiko:skiko-jvm-runtime-${detectOs()}-x64:0.1.21")
 }
 
