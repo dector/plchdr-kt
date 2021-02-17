@@ -11,6 +11,7 @@ import org.http4k.server.Netty
 import org.http4k.server.asServer
 import org.jetbrains.skija.EncodedImageFormat
 import org.jetbrains.skija.Surface
+import java.io.InputStream
 
 
 fun main() {
@@ -19,14 +20,20 @@ fun main() {
         val h = req.path("height")?.toIntOrNull() ?: w
         val color = parseColor(req.path("color"))
 
-        val pngData = createPngImage(w, h, color)
-
         Response(OK)
             .header("Content-Type", "image/png")
-            .body(pngData.inputStream())
+            .body(
+                createImageStream(
+                    width = w,
+                    height = h,
+                    color = color,
+                )
+            )
     }
 
     val app = routes(
+        "/{width}" bind GET to handler,
+        "/{width}x{height}" bind GET to handler,
         "/{width}/{height}" bind GET to handler,
         "/{width}/{height}/{color:[a-f0-9]*}" bind GET to handler,
     )
@@ -36,7 +43,7 @@ fun main() {
 }
 
 private fun createPngImage(w: Int, h: Int, color: Int): ByteArray {
-    val surface = Surface.makeRasterN32Premul(w, h)!!
+    val surface = Surface.makeRasterN32Premul(w, h)
     val canvas = surface.canvas
 
     val bgColor = (0xff000000 or color.toLong()).toInt()
@@ -63,4 +70,14 @@ private fun parseColor(str: String?): Int {
     }
 
     return colorString.toIntOrNull(radix = 16) ?: DefaultColor
+}
+
+fun createImageStream(
+    width: Int,
+    height: Int,
+    color: Int,
+): InputStream {
+    val pngData = createPngImage(width, height, color)
+
+    return pngData.inputStream()
 }
