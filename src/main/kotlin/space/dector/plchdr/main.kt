@@ -9,8 +9,7 @@ import org.http4k.routing.path
 import org.http4k.routing.routes
 import org.http4k.server.Netty
 import org.http4k.server.asServer
-import org.jetbrains.skija.EncodedImageFormat
-import org.jetbrains.skija.Surface
+import org.jetbrains.skija.*
 import java.io.InputStream
 
 
@@ -25,6 +24,7 @@ fun main() {
             ?.takeIf { it > 0 }
             ?: w
         val color = parseColor(req.path("color"))
+        val text = req.query("text")
 
         Response(OK)
             .header("Content-Type", "image/png")
@@ -33,6 +33,7 @@ fun main() {
                     width = w,
                     height = h,
                     color = color,
+                    text = text,
                 )
             )
     }
@@ -48,12 +49,19 @@ fun main() {
     server.start().block()
 }
 
-private fun createPngImage(w: Int, h: Int, color: Int): ByteArray {
+private fun createPngImage(
+    w: Int,
+    h: Int,
+    color: Int,
+    action: ((Canvas) -> Unit)? = null,
+): ByteArray {
     val surface = Surface.makeRasterN32Premul(w, h)
     val canvas = surface.canvas
 
     val bgColor = (0xff000000 or color.toLong()).toInt()
     canvas.clear(bgColor)
+
+    action?.invoke(canvas)
 
     val image = surface.makeImageSnapshot()
     val pngData = image.encodeToData(EncodedImageFormat.PNG)!!
@@ -78,12 +86,24 @@ private fun parseColor(str: String?): Int {
     return colorString.toIntOrNull(radix = 16) ?: DefaultColor
 }
 
+private val font = Font(Typeface.makeDefault(), 32f)
+private val paint = Paint().setColor(0xff000000.toInt())
+
 fun createImageStream(
     width: Int,
     height: Int,
     color: Int,
+    text: String? = null,
 ): InputStream {
-    val pngData = createPngImage(width, height, color)
+    val pngData = createPngImage(width, height, color) { canvas ->
+        if (text != null) {
+            val measures = font.measureText(text, paint)
+            val x = (width - measures.width) / 2
+            val y = (height + measures.height / 2) / 2
+
+            canvas.drawString(text, x, y, font, paint)
+        }
+    }
 
     return pngData.inputStream()
 }
