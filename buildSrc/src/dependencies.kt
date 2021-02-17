@@ -1,5 +1,5 @@
 object Kotlin {
-    val version = "1.4.21"
+    val version = "1.4.30"
 }
 
 object Http4K {
