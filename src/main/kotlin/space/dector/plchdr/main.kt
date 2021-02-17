@@ -16,8 +16,14 @@ import java.io.InputStream
 
 fun main() {
     val handler = { req: Request ->
-        val w = req.path("width")?.toIntOrNull() ?: 100
-        val h = req.path("height")?.toIntOrNull() ?: w
+        val w = req.path("width")
+            ?.toIntOrNull()
+            ?.takeIf { it > 0 }
+            ?: 100
+        val h = req.path("height")
+            ?.toIntOrNull()
+            ?.takeIf { it > 0 }
+            ?: w
         val color = parseColor(req.path("color"))
 
         Response(OK)
