@@ -8,7 +8,7 @@ dependencies {
     implementation(Http4K.core)
     implementation(Http4K.netty)
 
-    implementation("org.jetbrains.skiko:skiko-jvm-runtime-${detectOs()}-x64:0.1.21")
+    implementation("org.jetbrains.skiko:skiko-jvm-runtime-${detectOs()}-x64:0.2.6")
 }
 
 group = "space.dector.${rootProject.name}"
