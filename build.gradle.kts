@@ -16,7 +16,7 @@ version = "0.1-SNAPSHOT"
 
 
 repositories {
-    jcenter()
+    mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
