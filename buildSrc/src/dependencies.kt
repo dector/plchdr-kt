@@ -3,7 +3,7 @@ object Kotlin {
 }
 
 object Http4K {
-    val version = "4.0.0.0"
+    val version = "4.3.3.0"
 
     val core = "org.http4k:http4k-core:$version"
     val netty = "org.http4k:http4k-server-netty:$version"
