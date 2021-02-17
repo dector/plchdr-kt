@@ -39,9 +39,9 @@ fun main() {
 
     val app = routes(
         "/{width:[0-9]+}" bind GET to handler,
+        "/{width:[0-9]+}/{color:[a-f0-9]*}" bind GET to handler,
         "/{width:[0-9]+}x{height:[0-9]+}" bind GET to handler,
-        "/{width:[0-9]+}/{height:[0-9]+}" bind GET to handler,
-        "/{width:[0-9]+}/{height:[0-9]+}/{color:[a-f0-9]*}" bind GET to handler,
+        "/{width:[0-9]+}x{height:[0-9]+}/{color:[a-f0-9]*}" bind GET to handler,
     )
 
     val server = app.asServer(Netty())
