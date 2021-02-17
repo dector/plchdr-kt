@@ -15,7 +15,7 @@ _TBD_
 
 - [x] `Width x Height`.
 - [x] `Width x Height` and `Color`.
-- [ ] Optional `Height`.
+- [x] Optional `Height`.
 - [ ] Image format (`JPEG`, `PNG`).
 - [ ] Text with color.
 - [ ] Contrast to color.
